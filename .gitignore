@@ -1,0 +1,4 @@
+**/__pycache__/
+**/ardu_sim/
+*.pyc
+*.txt
