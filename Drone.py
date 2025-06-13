@@ -258,17 +258,6 @@ class Drone():
         '''
         # Base 要傳送他的座標或訊息給rover，或rover要傳送回應給base使用
         # 對於base而言是當作TCP server， rover 則為 TCP clent
-        lat = float(self.vehicle.location.global_frame.lat)
-        lon = float(self.vehicle.location.global_frame.lon)
-        alt = float(self.vehicle.location.global_relative_frame.alt)
-        # formatted_height = f"{height_float:06.2f}"
-        current_time = datetime.now().strftime("%M%S")    # This will turn the time into minute and second format, something like 0835 (08:35)
-        # assert(lat <= 90 and lat >= -90)              
-        # assert(lon <= 180 and lon >= -180)      
-        # assert(alt < 100)                    # Assumes altitude below 100, if higher the message format requires adaptation
-        TCP_msg = str("{:011.8f}".format(lat)) + str("{:012.8f}".format(lon)) + str("{:06.2f}".format(alt)) + str(current_time)
-        client.send(TCP_msg.encode())
-        print("Sent:",TCP_msg)
         '''
         self.protocol.sendMsg(client, msgName, self.vehicle) #vehicle 用來取得無人機位置以計算rover的位置
     
@@ -291,21 +280,9 @@ class Drone():
         # 3. Last possibility is the vehicle coordinates information
         else:
             lat, lon, alt, recvTime = val
-            if abs(lat) < 0.1 and abs(lon) < 0.1:  #如收到經緯度為0，代表base靜止中
-                return None
-            
-            #print("Received Message:", lat, lon, alt, recvTime)
             p1 = LocationGlobalRelative(lat,lon,alt) 
-            
-            currentTime = int(datetime.now().strftime("%S"))
-            ''' If the received data was delayed for less than ___ seconds'''
-            if(helper.timeIsValid(curTime=currentTime,recvTime=recvTime)):
-                print("Distance to the received point:", int(helper.getDistanceMetres(p1, self.vehicle.location.global_frame)))
-                return p1 
-            else:
-                print("Rover received an outdated message")
-                print(currentTime,recvTime)
-                return None  
+            print("Distance to the received point:", int(helper.getDistanceMetres(p1, self.vehicle.location.global_frame)))
+            return p1 
     
     def send_global_velocity(self, north, east, down=0):
         

@@ -26,9 +26,7 @@ class Protocol():
         if msgName == "COORDINATES":
             lat, lon = self.formation.getRoverPosition_0(vehicle) #取得rover的目標位置
             alt=setting.ROVER_HEIGHT
-            #alt = float(vehicle.location.global_relative_frame.alt)
-            if (alt<0): alt=0.0
-            if lat is not None:  
+            if lat is not None:  #base是靜止，則lat 和 lon 傳送 (None, None)
                 current_time = datetime.now().strftime("%M%S")     # This will turn the time into minute and second format, something like 0835 (08:35)
                 TCP_msg = "0"+ str("{:011.8f}".format(lat)) + str("{:012.8f}".format(lon)) + str("{:06.2f}".format(alt)) + str(current_time)
             else:

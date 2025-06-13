@@ -32,7 +32,17 @@ if(len(sys.argv) <4):
 if(sys.argv[1] == "base"):
     baseDrone = Drone(baseVehicleIP)
     print("=====BASE=====")
-    baseDrone.vehicle.groundspeed=setting.BASE_SPEED
+    baseDrone.vehicle.parameters['WPNAV_SPEED'] = setting.BASE_SPEED
+    timeout = 2
+    start_time = time.time()
+    while time.time() - start_time < timeout:
+        current_speed = baseDrone.vehicle.parameters['WPNAV_SPEED']
+        if current_speed == setting.BASE_SPEED:
+            print(f"WPNAV_SPEED successfully set to {current_speed} cm/s")
+            break
+        print(f"Waiting for WPNAV_SPEED to update... Current: {current_speed}")
+        time.sleep(1)
+    
     ''' Setting up server '''
     ip = sys.argv[2]
     port = int(sys.argv[3])
